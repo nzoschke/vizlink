@@ -16,5 +16,5 @@ prettier:
 	pnpm prettier -w .
 
 vizlink/target/vizlink: $(shell find vizlink -type f -name '*.java') jdk
-	mvn install -f vizlink/pom.xml
-	mvn -f vizlink/pom.xml -Pnative -DskipTests package
+	mvn install -f vizlink/pom.xml -q
+	mvn package -f vizlink/pom.xml -q -Pnative -DskipTests
