@@ -44,34 +44,6 @@ Invoke one-off RPC commands:
     "mood": "mid",
     "phrases": [
       { "beat": 1, "kind": "mid/intro" },
-      { "beat": 33, "kind": "mid/intro" },
-      { "beat": 61, "kind": "mid/intro" },
-      { "beat": 69, "kind": "mid/intro" },
-      { "beat": 125, "kind": "mid/intro" },
-      { "beat": 165, "kind": "mid/verse_1" },
-      { "beat": 197, "kind": "mid/bridge" },
-      { "beat": 221, "kind": "mid/verse_2" },
-      { "beat": 241, "kind": "mid/chorus" },
-      { "beat": 261, "kind": "mid/chorus" },
-      { "beat": 301, "kind": "mid/verse_3" },
-      { "beat": 309, "kind": "mid/verse_4" },
-      { "beat": 321, "kind": "mid/verse_5" },
-      { "beat": 345, "kind": "mid/bridge" },
-      { "beat": 361, "kind": "mid/verse_6" },
-      { "beat": 449, "kind": "mid/verse_1" },
-      { "beat": 457, "kind": "mid/verse_2" },
-      { "beat": 477, "kind": "mid/verse_2" },
-      { "beat": 521, "kind": "mid/chorus" },
-      { "beat": 533, "kind": "mid/chorus" },
-      { "beat": 541, "kind": "mid/chorus" },
-      { "beat": 561, "kind": "mid/bridge" },
-      { "beat": 577, "kind": "mid/verse_3" },
-      { "beat": 593, "kind": "mid/bridge" },
-      { "beat": 609, "kind": "mid/verse_4" },
-      { "beat": 621, "kind": "mid/verse_5" },
-      { "beat": 633, "kind": "mid/verse_6" },
-      { "beat": 649, "kind": "mid/verse_1" },
-      { "beat": 681, "kind": "mid/bridge" },
       { "beat": 713, "kind": "mid/outro" }
     ],
     "player": null
@@ -95,7 +67,6 @@ This project uses [GraalVM JDK Native Image](https://www.graalvm.org/latest/refe
 Local dev requires an M1+ Mac
 
 ```bash
-# make project
 make
 ```
 

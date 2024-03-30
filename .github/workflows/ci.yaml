@@ -1,0 +1,14 @@
+name: CI
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-go:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          make jdk
+          make
