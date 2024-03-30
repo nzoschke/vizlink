@@ -1,0 +1,22 @@
+{
+  "devDependencies": {
+    "@prettier/plugin-xml": "^3.4.1",
+    "prettier": "^3.2.5",
+    "prettier-plugin-java": "^2.6.0"
+  },
+  "prettier": {
+    "plugins": [
+      "@prettier/plugin-xml",
+      "prettier-plugin-java"
+    ],
+    "printWidth": 160,
+    "xmlQuoteAttributes": "double",
+    "xmlWhitespaceSensitivity": "ignore"
+  },
+  "lint-staged": {
+    "*.{java,json,md,xml}": "prettier --write"
+  },
+  "scripts": {
+    "prepare": "husky install"
+  }
+}
