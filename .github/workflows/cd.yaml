@@ -1,8 +1,13 @@
 name: CD
 
 on:
-  pull_request: # FIXME: `push` before merging
+  pull_request:
     branches: ["main"]
+
+# on:
+#   push:
+#     tags:
+#       - "v*.*.*"
 
 jobs:
   release:
@@ -12,7 +17,8 @@ jobs:
       - run: |
           make jdk
           make
+          mv vizlink/target/vizlink vizlink-darwin-arm64
       - uses: softprops/action-gh-release@v2
         with:
-          files: vizlink/target/vizlink
-          tag_name: dev
+          files: vizlink-darwin-arm64
+          tag_name: dev # FIXME: remove
