@@ -17,4 +17,4 @@ prettier:
 
 vizlink/target/vizlink: $(shell find vizlink -type f -name '*.java') jdk
 	mvn install -f vizlink/pom.xml -q
-	mvn -f vizlink/pom.xml -Pnative -DskipTests package
+	mvn package -f vizlink/pom.xml -q -Pnative -DskipTests

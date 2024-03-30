@@ -1,13 +1,9 @@
 name: CD
 
 on:
-  pull_request:
-    branches: ["main"]
-
-# on:
-#   push:
-#     tags:
-#       - "v*.*.*"
+  push:
+    tags:
+      - "v*.*.*"
 
 jobs:
   release:
@@ -21,4 +17,3 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           files: vizlink-darwin-arm64
-          tag_name: dev # FIXME: remove
