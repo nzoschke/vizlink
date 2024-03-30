@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := vizlink/target/vizlink
+
 export JAVA_HOME=$(PWD)/bellsoft-liberica-vm-core-openjdk21-23.1.2/Contents/Home
 
 bellsoft-liberica-vm-core-openjdk21-23.1.2:
@@ -7,6 +9,12 @@ bellsoft-liberica-vm-core-openjdk21-23.1.2:
 clean:
 	rm -rf vizlink/target
 
-vizlink/target/vizlink: $(shell find vizlink -type f -name '*.java')
+jdk: bellsoft-liberica-vm-core-openjdk21-23.1.2
+
+prettier:
+	pnpm install -D @prettier/plugin-xml prettier prettier-plugin-java
+	pnpm prettier -w .
+
+vizlink/target/vizlink: $(shell find vizlink -type f -name '*.java') jdk
 	mvn install -f vizlink/pom.xml
 	mvn -f vizlink/pom.xml -Pnative -DskipTests package
