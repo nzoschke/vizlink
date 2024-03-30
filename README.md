@@ -4,7 +4,7 @@ Part of [VizLab](https://vizlab.app), the easiest way for DJs to create visuals 
 
 To get started:
 
-1. Build from source (pre-built releases coming soon)
+1. Download latest release (or make from source)
 2. Run `vizlink` (and make sure Rekordbox.app is not running)
 3. Connect your computer to a Pioneer Pro Link network and CDJs
 
@@ -16,7 +16,20 @@ Now your CDJs are linked to stdin / stdout / stderr:
 
 ## Usage
 
-See events on stdout:
+Download an install the latest release.
+
+```bash
+DEST=/opt/homebrew/bin/vizlink
+curl -Lo $DEST https://github.com/nzoschke/vizlink/releases/latest/download/vizlink-darwin-arm64 && chmod +x $DEST
+```
+
+Run VizLink. You must close Rekordbox.app first since VizLink requires the same port to talk to CDJs.
+
+```bash
+vizlink
+```
+
+See events on stdout.
 
 ```json
 {"payload":{"code":0,"msg":"hi"},"ms":1711834477545,"type":"sys","version":1}
@@ -24,14 +37,14 @@ See events on stdout:
 {"payload":{"album":"Falling In A Dream EP","artist":"AADJA","cues":[],"duration":273000,"player":1,"source":{"id":158,"player":1,"slot":"SD_SLOT"},"tempo":147.0,"title":"Falling In A Dream (D.Dan Remix)","year":2021},"ms":1711834531790,"type":"track","version":1}
 ```
 
-Send commands on stdin:
+Send commands on stdin.
 
 ```json
 {"payload":{"msg":"find"},"type":"sys"}
 {"payload":{"player":1,"onAir":true},"type":"cdj"}
 ```
 
-Invoke one-off RPC commands:
+Invoke one-off RPC commands.
 
 ```bash
 ./vizlink/target/vizlink -r '{"fn":"structure","args":["/Users/noah/Library/Pioneer/rekordbox/share/PIONEER/USBANLZ/f6c/ac4e8-f264-481d-b81c-fd16538c4bc2/ANLZ0000.EXT"]}'
