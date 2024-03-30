@@ -1,0 +1,119 @@
+lockfileVersion: "6.0"
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+devDependencies:
+  "@prettier/plugin-xml":
+    specifier: ^3.4.1
+    version: 3.4.1(prettier@3.2.5)
+  prettier:
+    specifier: ^3.2.5
+    version: 3.2.5
+  prettier-plugin-java:
+    specifier: ^2.6.0
+    version: 2.6.0
+
+packages:
+  /@chevrotain/cst-dts-gen@11.0.3:
+    resolution: { integrity: sha512-BvIKpRLeS/8UbfxXxgC33xOumsacaeCKAjAeLyOn7Pcp95HiRbrpl14S+9vaZLolnbssPIUuiUd8IvgkRyt6NQ== }
+    dependencies:
+      "@chevrotain/gast": 11.0.3
+      "@chevrotain/types": 11.0.3
+      lodash-es: 4.17.21
+    dev: true
+
+  /@chevrotain/gast@11.0.3:
+    resolution: { integrity: sha512-+qNfcoNk70PyS/uxmj3li5NiECO+2YKZZQMbmjTqRI3Qchu8Hig/Q9vgkHpI3alNjr7M+a2St5pw5w5F6NL5/Q== }
+    dependencies:
+      "@chevrotain/types": 11.0.3
+      lodash-es: 4.17.21
+    dev: true
+
+  /@chevrotain/regexp-to-ast@11.0.3:
+    resolution: { integrity: sha512-1fMHaBZxLFvWI067AVbGJav1eRY7N8DDvYCTwGBiE/ytKBgP8azTdgyrKyWZ9Mfh09eHWb5PgTSO8wi7U824RA== }
+    dev: true
+
+  /@chevrotain/types@11.0.3:
+    resolution: { integrity: sha512-gsiM3G8b58kZC2HaWR50gu6Y1440cHiJ+i3JUvcp/35JchYejb2+5MVeJK0iKThYpAa/P2PYFV4hoi44HD+aHQ== }
+    dev: true
+
+  /@chevrotain/utils@11.0.3:
+    resolution: { integrity: sha512-YslZMgtJUyuMbZ+aKvfF3x1f5liK4mWNxghFRv7jqRR9C3R3fAOGTTKvxXDa2Y1s9zSbcpuO0cAxDYsc9SrXoQ== }
+    dev: true
+
+  /@prettier/plugin-xml@3.4.1(prettier@3.2.5):
+    resolution: { integrity: sha512-Uf/6/+9ez6z/IvZErgobZ2G9n1ybxF5BhCd7eMcKqfoWuOzzNUxBipNo3QAP8kRC1VD18TIo84no7LhqtyDcTg== }
+    peerDependencies:
+      prettier: ^3.0.0
+    dependencies:
+      "@xml-tools/parser": 1.0.11
+      prettier: 3.2.5
+    dev: true
+
+  /@xml-tools/parser@1.0.11:
+    resolution: { integrity: sha512-aKqQ077XnR+oQtHJlrAflaZaL7qZsulWc/i/ZEooar5JiWj1eLt0+Wg28cpa+XLney107wXqneC+oG1IZvxkTA== }
+    dependencies:
+      chevrotain: 7.1.1
+    dev: true
+
+  /chevrotain-allstar@0.3.1(chevrotain@11.0.3):
+    resolution: { integrity: sha512-b7g+y9A0v4mxCW1qUhf3BSVPg+/NvGErk/dOkrDaHA0nQIQGAtrOjlX//9OQtRlSCy+x9rfB5N8yC71lH1nvMw== }
+    peerDependencies:
+      chevrotain: ^11.0.0
+    dependencies:
+      chevrotain: 11.0.3
+      lodash-es: 4.17.21
+    dev: true
+
+  /chevrotain@11.0.3:
+    resolution: { integrity: sha512-ci2iJH6LeIkvP9eJW6gpueU8cnZhv85ELY8w8WiFtNjMHA5ad6pQLaJo9mEly/9qUyCpvqX8/POVUTf18/HFdw== }
+    dependencies:
+      "@chevrotain/cst-dts-gen": 11.0.3
+      "@chevrotain/gast": 11.0.3
+      "@chevrotain/regexp-to-ast": 11.0.3
+      "@chevrotain/types": 11.0.3
+      "@chevrotain/utils": 11.0.3
+      lodash-es: 4.17.21
+    dev: true
+
+  /chevrotain@7.1.1:
+    resolution: { integrity: sha512-wy3mC1x4ye+O+QkEinVJkPf5u2vsrDIYW9G7ZuwFl6v/Yu0LwUuT2POsb+NUWApebyxfkQq6+yDfRExbnI5rcw== }
+    dependencies:
+      regexp-to-ast: 0.5.0
+    dev: true
+
+  /java-parser@2.3.0:
+    resolution: { integrity: sha512-P6Ma4LU1w/e0Lr4SVM/0PtqCGoL2/i/KP9ZoiyLa824oBqhF0yGTgHDyZkLgp9GTzqR43wm5wabE56FF5X7cqg== }
+    dependencies:
+      chevrotain: 11.0.3
+      chevrotain-allstar: 0.3.1(chevrotain@11.0.3)
+      lodash: 4.17.21
+    dev: true
+
+  /lodash-es@4.17.21:
+    resolution: { integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw== }
+    dev: true
+
+  /lodash@4.17.21:
+    resolution: { integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg== }
+    dev: true
+
+  /prettier-plugin-java@2.6.0:
+    resolution: { integrity: sha512-mHZ3Ub3WAyYSUe1mMbiGH85xYV+NtzJgNsrfLNYDKvL7NfvoKBuJiEW4Xa2MFG668f9uRdj38WEuPKmRu+nv/g== }
+    dependencies:
+      java-parser: 2.3.0
+      lodash: 4.17.21
+      prettier: 3.2.5
+    dev: true
+
+  /prettier@3.2.5:
+    resolution: { integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A== }
+    engines: { node: ">=14" }
+    hasBin: true
+    dev: true
+
+  /regexp-to-ast@0.5.0:
+    resolution: { integrity: sha512-tlbJqcMHnPKI9zSrystikWKwHkBqu2a/Sgw01h3zFjvYrMxEDYHzzoMZnUrbIfpTFEsoRnnviOXNCzFiSc54Qw== }
+    dev: true
