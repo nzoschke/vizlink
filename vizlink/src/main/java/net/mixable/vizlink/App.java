@@ -37,6 +37,7 @@ import org.deepsymmetry.beatlink.DeviceAnnouncement;
 import org.deepsymmetry.beatlink.DeviceAnnouncementListener;
 import org.deepsymmetry.beatlink.DeviceFinder;
 import org.deepsymmetry.beatlink.DeviceUpdate;
+import org.deepsymmetry.beatlink.MediaDetails;
 import org.deepsymmetry.beatlink.VirtualCdj;
 import org.deepsymmetry.beatlink.data.AlbumArt;
 import org.deepsymmetry.beatlink.data.AlbumArtListener;
@@ -165,7 +166,10 @@ public class App {
             for (Map.Entry<DeckReference, TrackMetadata> entry : MetadataFinder.getInstance().getLoadedTracks().entrySet()) {
               DeckReference dr = entry.getKey();
               if (dr.hotCue != 0) continue;
-              Track t = new Track(dr.player, entry.getValue());
+
+              TrackMetadata metadata = entry.getValue();
+              MediaDetails md = MetadataFinder.getInstance().getMediaDetailsFor(metadata.trackReference.getSlotReference());
+              Track t = new Track(dr.player, metadata, md);
               System.out.println(OM.string(new Message(t, "track")));
             }
 
@@ -443,7 +447,8 @@ public class App {
             System.err.println("MetadataFinder.metadataChanged: " + update);
             if (update.metadata == null) return;
 
-            Track t = new Track(update.player, update.metadata);
+            MediaDetails md = MetadataFinder.getInstance().getMediaDetailsFor(update.metadata.trackReference.getSlotReference());
+            Track t = new Track(update.player, update.metadata, md);
             System.out.println(OM.string(new Message(t, "track")));
           }
         }
