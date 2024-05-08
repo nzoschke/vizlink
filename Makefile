@@ -11,6 +11,10 @@ clean:
 
 jdk: bellsoft-liberica-vm-core-openjdk21-23.1.2
 
+jdk-x86_64:
+	curl -LOs https://download.bell-sw.com/vm/23.1.2/bellsoft-liberica-vm-core-openjdk21.0.2+14-23.1.2+1-macos-amd64.tar.gz
+	tar xfz bellsoft-liberica-vm-core-openjdk21.0.2+14-23.1.2+1-macos-amd64.tar.gz
+
 prettier:
 	pnpm install -D @prettier/plugin-xml prettier prettier-plugin-java
 	pnpm prettier -w .

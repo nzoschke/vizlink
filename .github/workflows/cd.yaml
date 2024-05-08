@@ -17,3 +17,15 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           files: vizlink-darwin-arm64
+
+  release:
+    runs-on: macos-latest-large
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          make jdk-x86_64
+          make
+          mv vizlink/target/vizlink vizlink-darwin-x86_64
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: vizlink-darwin-x86_64
