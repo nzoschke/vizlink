@@ -6,7 +6,7 @@ on:
       - "v*.*.*"
 
 jobs:
-  release:
+  release-arm64:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v3
@@ -18,7 +18,7 @@ jobs:
         with:
           files: vizlink-darwin-arm64
 
-  release:
+  release-x86_64:
     runs-on: macos-latest-large
     steps:
       - uses: actions/checkout@v3
