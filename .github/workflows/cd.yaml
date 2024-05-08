@@ -18,14 +18,14 @@ jobs:
         with:
           files: vizlink-darwin-arm64
 
-  release-x86_64:
+  release-amd64:
     runs-on: macos-latest-large
     steps:
       - uses: actions/checkout@v3
       - run: |
-          make jdk-x86_64
+          make jdk-amd64
           make
-          mv vizlink/target/vizlink vizlink-darwin-x86_64
+          mv vizlink/target/vizlink vizlink-darwin-amd64
       - uses: softprops/action-gh-release@v2
         with:
-          files: vizlink-darwin-x86_64
+          files: vizlink-darwin-amd64
