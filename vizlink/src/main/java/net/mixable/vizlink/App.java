@@ -87,7 +87,7 @@ public class App {
     CommandLine cmd = parser.parse(options, args);
 
     if (cmd.hasOption("h")) {
-      new HelpFormatter().printHelp("beatl", options);
+      new HelpFormatter().printHelp("vizlink", options);
       return;
     }
 
