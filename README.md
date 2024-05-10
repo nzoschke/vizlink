@@ -90,3 +90,18 @@ brew install maven pnpm
 mvn archetype:generate -DgroupId=net.mixable.vizlink -DartifactId=vizlink -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false
 make prettier
 ```
+
+## Docker
+
+```bash
+docker build . -t vizlink
+ID=$(docker create vizlink)
+docker cp $ID:/vizlink/target/vizlink vizlink-linux-arm64
+docker rm $ID
+
+export PATH=$PATH:/Users/noah/Library/Android/sdk/platform-tools
+adb push vizlink-linux-arm64 /data/local/tmp
+adb shell "/data/local/tmp/vizlink-linux-arm64"
+
+docker run -it vizlink bash
+```

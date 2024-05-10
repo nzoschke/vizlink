@@ -138,6 +138,11 @@
               </execution>
             </executions>
             <configuration>
+              <buildArgs>
+                <arg>--libc=musl</arg>
+                <arg>--static</arg>
+                <arg>--native-compiler-path=/aarch64-linux-musl-native/bin/aarch64-linux-musl-gcc</arg>
+              </buildArgs>
               <mainClass>net.mixable.vizlink.App</mainClass>
             </configuration>
           </plugin>
