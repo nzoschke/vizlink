@@ -91,8 +91,8 @@ public class App {
       return;
     }
 
-    IO io = new IO(data -> {
-      System.out.println(data);
+    IO io = new IO(out -> {
+      System.out.println(out);
     });
 
     if (cmd.hasOption("r")) {
@@ -127,7 +127,7 @@ public class App {
       try (Scanner scanner = new Scanner(System.in)) {
         while (true) {
           String line = scanner.nextLine();
-          io.writeIn(line);
+          io.in(line);
         }
       }
     }).start();

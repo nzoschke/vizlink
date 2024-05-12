@@ -24,7 +24,7 @@ public class IO {
     this.out = out;
   }
 
-  public void writeIn(String s) {
+  public void in(String s) {
     try {
       this.inW.write((s + "\n").getBytes(StandardCharsets.UTF_8));
     } catch (IOException e) {
