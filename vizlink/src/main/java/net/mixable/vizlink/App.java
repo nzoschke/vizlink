@@ -102,7 +102,8 @@ public class App {
 
     int number = Integer.parseInt(coalesce(cmd.getOptionValue("n"), "4"));
 
-    stdioListen(io);
+    ioListen(io);
+    stdioPipe(io);
     beatLinkListen(io);
     beatLinkStartDeviceFinder(io, number);
 
@@ -116,14 +117,26 @@ public class App {
     if (r.fn.equals("structure")) {
       byte[] bs = Files.readAllBytes(new File(r.args.get(0)).toPath());
       Structure s = new Structure(bs);
-      io.write(OM.string(new Message(s, "structure")));
+      io.out(OM.string(new Message(s, "structure")));
     }
   }
 
-  public static void stdioListen(IO io) {
+  public static void stdioPipe(IO io) {
     new Thread(() -> {
-      System.err.println("stdioListen");
-      io.write(OM.string(new Message(new Sys("hi", 0), "sys")));
+      System.err.println("stdioPipe");
+      try (Scanner scanner = new Scanner(System.in)) {
+        while (true) {
+          String line = scanner.nextLine();
+          io.writeIn(line);
+        }
+      }
+    }).start();
+  }
+
+  public static void ioListen(IO io) {
+    new Thread(() -> {
+      System.err.println("ioListen");
+      io.out(OM.string(new Message(new Sys("hi", 0), "sys")));
 
       final Scanner scanner = new Scanner(io.in);
       while (true) {
@@ -138,11 +151,11 @@ public class App {
         if (m.type.equals("sys")) {
           Sys sys = OM.sys(m);
           if (sys.msg.equals("echo")) {
-            io.write(OM.string(new Message(sys, "sys")));
+            io.out(OM.string(new Message(sys, "sys")));
           }
 
           if (sys.msg.equals("exit")) {
-            io.write(OM.string(new Message(new Sys("bye", 0), "sys")));
+            io.out(OM.string(new Message(new Sys("bye", 0), "sys")));
             scanner.close();
             System.exit(0);
           }
@@ -156,7 +169,7 @@ public class App {
                 }
 
                 CDJ p = new CDJ((CdjStatus) du);
-                io.write(OM.string(new Message(p, "cdj")));
+                io.out(OM.string(new Message(p, "cdj")));
               }
             }
 
@@ -164,7 +177,7 @@ public class App {
             if (VirtualCdj.getInstance().isRunning()) {
               number = VirtualCdj.getInstance().getDeviceNumber();
             }
-            io.write(OM.string(new Message(new Sys("vcdj", number), "sys")));
+            io.out(OM.string(new Message(new Sys("vcdj", number), "sys")));
 
             // emit track metadata before other data
             for (Map.Entry<DeckReference, TrackMetadata> entry : MetadataFinder.getInstance().getLoadedTracks().entrySet()) {
@@ -174,7 +187,7 @@ public class App {
               TrackMetadata metadata = entry.getValue();
               MediaDetails md = MetadataFinder.getInstance().getMediaDetailsFor(metadata.trackReference.getSlotReference());
               Track t = new Track(dr.player, metadata, md);
-              io.write(OM.string(new Message(t, "track")));
+              io.out(OM.string(new Message(t, "track")));
             }
 
             for (Map.Entry<DeckReference, Map<String, CacheEntry>> entry : AnalysisTagFinder.getInstance().getLoadedAnalysisTags().entrySet()) {
@@ -183,28 +196,28 @@ public class App {
               CacheEntry ce = entry.getValue().get("PSSI.EXT");
               if (ce == null) continue;
               Structure s = new Structure(dr.player, ce.taggedSection);
-              io.write(OM.string(new Message(s, "structure")));
+              io.out(OM.string(new Message(s, "structure")));
             }
 
             for (Map.Entry<DeckReference, AlbumArt> entry : ArtFinder.getInstance().getLoadedArt().entrySet()) {
               DeckReference dr = entry.getKey();
               if (dr.hotCue != 0) continue;
               Art a = new Art(dr.player, entry.getValue());
-              io.write(OM.string(new Message(a, "art")));
+              io.out(OM.string(new Message(a, "art")));
             }
 
             for (Map.Entry<DeckReference, BeatGrid> entry : BeatGridFinder.getInstance().getLoadedBeatGrids().entrySet()) {
               DeckReference dr = entry.getKey();
               if (dr.hotCue != 0) continue;
               Grid g = new Grid(dr.player, entry.getValue());
-              io.write(OM.string(new Message(g, "grid")));
+              io.out(OM.string(new Message(g, "grid")));
             }
 
             for (Map.Entry<DeckReference, WaveformPreview> entry : WaveformFinder.getInstance().getLoadedPreviews().entrySet()) {
               DeckReference dr = entry.getKey();
               if (dr.hotCue != 0) continue;
               Waveform w = new Waveform(dr.player, entry.getValue());
-              io.write(OM.string(new Message(w, "waveform")));
+              io.out(OM.string(new Message(w, "waveform")));
             }
           }
         }
@@ -246,7 +259,7 @@ public class App {
       df.start();
       System.err.println("DeviceFinder.start");
     } catch (SocketException e) {
-      io.write(OM.string(new Message(new Err("DeviceFinder: " + e.getMessage(), 99), "error")));
+      io.out(OM.string(new Message(new Err("DeviceFinder: " + e.getMessage(), 99), "error")));
       System.exit(1);
     }
   }
@@ -259,7 +272,7 @@ public class App {
             vcdjStart(io, number);
           }
         } catch (Exception e) {
-          io.write(OM.string(new Message(new Err("VirtualCdj: " + e.getMessage(), 99), "error")));
+          io.out(OM.string(new Message(new Err("VirtualCdj: " + e.getMessage(), 99), "error")));
           e.printStackTrace();
         }
 
@@ -279,7 +292,7 @@ public class App {
   public static synchronized void vcdjStopWatchdog(IO io) {
     VirtualCdj.getInstance().stop();
     System.err.println("VirtualCdj.stop");
-    io.write(OM.string(new Message(new Sys("vcdj", 0), "sys")));
+    io.out(OM.string(new Message(new Sys("vcdj", 0), "sys")));
 
     if (vcdjThread != null) {
       vcdjThread.interrupt();
@@ -292,7 +305,7 @@ public class App {
     System.err.println("VirtualCdj.start: " + ok);
 
     if (ok) {
-      io.write(OM.string(new Message(new Sys("vcdj", number), "sys")));
+      io.out(OM.string(new Message(new Sys("vcdj", number), "sys")));
 
       for (DeviceAnnouncement ann : DeviceFinder.getInstance().getCurrentDevices()) {
         DeviceUpdate u = VirtualCdj.getInstance().getLatestStatusFor(ann);
@@ -328,7 +341,7 @@ public class App {
             if (update.taggedSection == null) return;
 
             Structure s = new Structure(update.player, update.taggedSection);
-            io.write(OM.string(new Message(s, "structure")));
+            io.out(OM.string(new Message(s, "structure")));
 
             Map<Number, String> phrases = new ConcurrentHashMap<Number, String>();
             for (int i = 0; i < s.phrases.size(); i++) {
@@ -352,7 +365,7 @@ public class App {
             if (update.art == null) return;
 
             Art a = new Art(update.player, update.art);
-            io.write(OM.string(new Message(a, "art")));
+            io.out(OM.string(new Message(a, "art")));
           }
         }
       );
@@ -378,19 +391,19 @@ public class App {
               System.err.println("BeatFinder.cdjStatus: " + s);
 
               net.mixable.vizlink.data.Beat b = new net.mixable.vizlink.data.Beat(cdj.beat, cdj.onAir, cdj.player);
-              io.write(OM.string(new Message(b, "beat")));
+              io.out(OM.string(new Message(b, "beat")));
             }
 
             Map<Number, String> cues = beatCues.get(cdj.player);
             if (cues != null && cues.containsKey(cdj.beat)) {
               Cue c = new Cue(cdj.beat, cues.get(cdj.beat), cdj.onAir, cdj.player);
-              io.write(OM.string(new Message(c, "cue")));
+              io.out(OM.string(new Message(c, "cue")));
             }
 
             Map<Number, String> phrases = beatPhrases.get(cdj.player);
             if (phrases != null && phrases.containsKey(cdj.beat)) {
               Phrase p = new Phrase(cdj.beat, phrases.get(cdj.beat), cdj.onAir, cdj.player);
-              io.write(OM.string(new Message(p, "phrase")));
+              io.out(OM.string(new Message(p, "phrase")));
             }
           }
         }
@@ -407,7 +420,7 @@ public class App {
 
             BeatGrid bg = update.beatGrid;
             Grid g = new Grid(update.player, bg);
-            io.write(OM.string(new Message(g, "grid")));
+            io.out(OM.string(new Message(g, "grid")));
 
             TrackMetadata tm = MetadataFinder.getInstance().getLatestMetadataFor(update.player);
             if (tm == null) return;
@@ -430,7 +443,7 @@ public class App {
             System.err.println("DeviceFinder.deviceFound: " + ann);
 
             Device d = new Device(ann, true);
-            io.write(OM.string(new Message(d, "device")));
+            io.out(OM.string(new Message(d, "device")));
           }
 
           @Override
@@ -438,7 +451,7 @@ public class App {
             System.err.println("DeviceFinder.deviceLost: " + ann);
 
             Device d = new Device(ann, false);
-            io.write(OM.string(new Message(d, "device")));
+            io.out(OM.string(new Message(d, "device")));
           }
         }
       );
@@ -453,7 +466,7 @@ public class App {
 
             MediaDetails md = MetadataFinder.getInstance().getMediaDetailsFor(update.metadata.trackReference.getSlotReference());
             Track t = new Track(update.player, update.metadata, md);
-            io.write(OM.string(new Message(t, "track")));
+            io.out(OM.string(new Message(t, "track")));
           }
         }
       );
@@ -467,7 +480,7 @@ public class App {
             update.preview.getData();
 
             Waveform w = new Waveform(update.player, update.preview);
-            io.write(OM.string(new Message(w, "waveform")));
+            io.out(OM.string(new Message(w, "waveform")));
           }
 
           @Override
@@ -486,7 +499,7 @@ public class App {
     // echo back the command for testing purposes
     if (!VirtualCdj.getInstance().isRunning()) {
       CDJ cdj = new CDJ(onAir, player);
-      io.write(OM.string(new Message(cdj, "cdj")));
+      io.out(OM.string(new Message(cdj, "cdj")));
       return;
     }
 
@@ -512,7 +525,7 @@ public class App {
         DeviceUpdate du = VirtualCdj.getInstance().getLatestStatusFor(player);
         CDJ cdj = new CDJ((CdjStatus) du);
         cdj.onAir = onAir;
-        io.write(OM.string(new Message(cdj, "cdj")));
+        io.out(OM.string(new Message(cdj, "cdj")));
       } catch (IOException e) {
         e.printStackTrace();
       }
