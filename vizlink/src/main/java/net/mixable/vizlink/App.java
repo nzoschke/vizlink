@@ -91,7 +91,9 @@ public class App {
       return;
     }
 
-    IO io = new IO();
+    IO io = new IO(data -> {
+      System.out.println(data);
+    });
 
     if (cmd.hasOption("r")) {
       rpc(io, cmd.getOptionValue("r"));
