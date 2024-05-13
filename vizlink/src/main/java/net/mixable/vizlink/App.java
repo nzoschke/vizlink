@@ -180,44 +180,54 @@ public class App {
             io.out(OM.string(new Message(new Sys("vcdj", number), "sys")));
 
             // emit track metadata before other data
-            for (Map.Entry<DeckReference, TrackMetadata> entry : MetadataFinder.getInstance().getLoadedTracks().entrySet()) {
-              DeckReference dr = entry.getKey();
-              if (dr.hotCue != 0) continue;
+            if (MetadataFinder.getInstance().isRunning()) {
+              for (Map.Entry<DeckReference, TrackMetadata> entry : MetadataFinder.getInstance().getLoadedTracks().entrySet()) {
+                DeckReference dr = entry.getKey();
+                if (dr.hotCue != 0) continue;
 
-              TrackMetadata metadata = entry.getValue();
-              MediaDetails md = MetadataFinder.getInstance().getMediaDetailsFor(metadata.trackReference.getSlotReference());
-              Track t = new Track(dr.player, metadata, md);
-              io.out(OM.string(new Message(t, "track")));
+                TrackMetadata metadata = entry.getValue();
+                MediaDetails md = MetadataFinder.getInstance().getMediaDetailsFor(metadata.trackReference.getSlotReference());
+                Track t = new Track(dr.player, metadata, md);
+                io.out(OM.string(new Message(t, "track")));
+              }
             }
 
-            for (Map.Entry<DeckReference, Map<String, CacheEntry>> entry : AnalysisTagFinder.getInstance().getLoadedAnalysisTags().entrySet()) {
-              DeckReference dr = entry.getKey();
-              if (dr.hotCue != 0) continue;
-              CacheEntry ce = entry.getValue().get("PSSI.EXT");
-              if (ce == null) continue;
-              Structure s = new Structure(dr.player, ce.taggedSection);
-              io.out(OM.string(new Message(s, "structure")));
+            if (AnalysisTagFinder.getInstance().isRunning()) {
+              for (Map.Entry<DeckReference, Map<String, CacheEntry>> entry : AnalysisTagFinder.getInstance().getLoadedAnalysisTags().entrySet()) {
+                DeckReference dr = entry.getKey();
+                if (dr.hotCue != 0) continue;
+                CacheEntry ce = entry.getValue().get("PSSI.EXT");
+                if (ce == null) continue;
+                Structure s = new Structure(dr.player, ce.taggedSection);
+                io.out(OM.string(new Message(s, "structure")));
+              }
             }
 
-            for (Map.Entry<DeckReference, AlbumArt> entry : ArtFinder.getInstance().getLoadedArt().entrySet()) {
-              DeckReference dr = entry.getKey();
-              if (dr.hotCue != 0) continue;
-              Art a = new Art(dr.player, entry.getValue());
-              io.out(OM.string(new Message(a, "art")));
+            if (ArtFinder.getInstance().isRunning()) {
+              for (Map.Entry<DeckReference, AlbumArt> entry : ArtFinder.getInstance().getLoadedArt().entrySet()) {
+                DeckReference dr = entry.getKey();
+                if (dr.hotCue != 0) continue;
+                Art a = new Art(dr.player, entry.getValue());
+                io.out(OM.string(new Message(a, "art")));
+              }
             }
 
-            for (Map.Entry<DeckReference, BeatGrid> entry : BeatGridFinder.getInstance().getLoadedBeatGrids().entrySet()) {
-              DeckReference dr = entry.getKey();
-              if (dr.hotCue != 0) continue;
-              Grid g = new Grid(dr.player, entry.getValue());
-              io.out(OM.string(new Message(g, "grid")));
+            if (BeatGridFinder.getInstance().isRunning()) {
+              for (Map.Entry<DeckReference, BeatGrid> entry : BeatGridFinder.getInstance().getLoadedBeatGrids().entrySet()) {
+                DeckReference dr = entry.getKey();
+                if (dr.hotCue != 0) continue;
+                Grid g = new Grid(dr.player, entry.getValue());
+                io.out(OM.string(new Message(g, "grid")));
+              }
             }
 
-            for (Map.Entry<DeckReference, WaveformPreview> entry : WaveformFinder.getInstance().getLoadedPreviews().entrySet()) {
-              DeckReference dr = entry.getKey();
-              if (dr.hotCue != 0) continue;
-              Waveform w = new Waveform(dr.player, entry.getValue());
-              io.out(OM.string(new Message(w, "waveform")));
+            if (WaveformFinder.getInstance().isRunning()) {
+              for (Map.Entry<DeckReference, WaveformPreview> entry : WaveformFinder.getInstance().getLoadedPreviews().entrySet()) {
+                DeckReference dr = entry.getKey();
+                if (dr.hotCue != 0) continue;
+                Waveform w = new Waveform(dr.player, entry.getValue());
+                io.out(OM.string(new Message(w, "waveform")));
+              }
             }
           }
         }
