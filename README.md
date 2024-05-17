@@ -77,7 +77,11 @@ This project uses [GraalVM JDK Native Image](https://www.graalvm.org/latest/refe
 
 ## Development
 
-Local dev requires an M1+ Mac
+```bash
+mvn exec:java -f vizlink/pom.xml -Dexec.mainClass="net.mixable.vizlink.App"
+```
+
+Local native build requires an M1+ Mac:
 
 ```bash
 make
