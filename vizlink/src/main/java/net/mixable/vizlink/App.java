@@ -114,6 +114,12 @@ public class App {
 
   public static void rpc(IO io, String payload) throws IOException {
     RPC r = OM.rpc(payload);
+    if (r.fn.equals("grid")) {
+      byte[] bs = Files.readAllBytes(new File(r.args.get(0)).toPath());
+      Grid s = new Grid(bs);
+      io.out(OM.string(new Message(s, "grid")));
+    }
+
     if (r.fn.equals("structure")) {
       byte[] bs = Files.readAllBytes(new File(r.args.get(0)).toPath());
       Structure s = new Structure(bs);
