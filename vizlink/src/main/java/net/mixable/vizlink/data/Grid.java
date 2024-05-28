@@ -18,8 +18,8 @@ public class Grid {
     this.player = player;
 
     beats = new ArrayList<>();
-    for (int i = 1; i <= bg.beatCount; i++) {
-      beats.add(new GridBeat(i, bg.getTimeWithinTrack(i)));
+    for (int i = 0; i <= bg.beatCount; i++) {
+      beats.add(new GridBeat(bg.getBeatWithinBar(i), bg.getTimeWithinTrack(i)));
     }
   }
 
@@ -39,7 +39,7 @@ public class Grid {
     beats = new ArrayList<>();
     for (int beatNumber = 0; beatNumber < bg.numBeats(); beatNumber++) {
       RekordboxAnlz.BeatGridBeat beat = bg.beats().get(beatNumber);
-      beats.add(new GridBeat(beatNumber, beat.time()));
+      beats.add(new GridBeat(beat.beatNumber(), beat.time()));
     }
   }
 }
