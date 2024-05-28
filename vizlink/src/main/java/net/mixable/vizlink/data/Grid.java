@@ -35,10 +35,11 @@ public class Grid {
 
   public void init(RekordboxAnlz.TaggedSection ts) {
     RekordboxAnlz.BeatGridTag bg = new RekordboxAnlz.BeatGridTag(new ByteBufferKaitaiStream(ts._raw_body()));
+
     beats = new ArrayList<>();
-    int i = 0;
-    for (RekordboxAnlz.BeatGridBeat e : bg.beats()) {
-      beats.add(new GridBeat(i++, e.time()));
+    for (int beatNumber = 0; beatNumber < bg.numBeats(); beatNumber++) {
+      RekordboxAnlz.BeatGridBeat beat = bg.beats().get(beatNumber);
+      beats.add(new GridBeat(beatNumber, beat.time()));
     }
   }
 }
