@@ -19,7 +19,7 @@ public class Grid {
 
     beats = new ArrayList<>();
     for (int i = 0; i <= bg.beatCount; i++) {
-      beats.add(new GridBeat(bg.getBeatWithinBar(i), bg.getTimeWithinTrack(i)));
+      beats.add(new GridBeat(i + 1, bg.getTimeWithinTrack(i)));
     }
   }
 
@@ -37,9 +37,9 @@ public class Grid {
     RekordboxAnlz.BeatGridTag bg = new RekordboxAnlz.BeatGridTag(new ByteBufferKaitaiStream(ts._raw_body()));
 
     beats = new ArrayList<>();
-    for (int beatNumber = 0; beatNumber < bg.numBeats(); beatNumber++) {
-      RekordboxAnlz.BeatGridBeat beat = bg.beats().get(beatNumber);
-      beats.add(new GridBeat(beat.beatNumber(), beat.time()));
+    for (int i = 0; i < bg.numBeats(); i++) {
+      RekordboxAnlz.BeatGridBeat beat = bg.beats().get(i);
+      beats.add(new GridBeat(i + 1, beat.time()));
     }
   }
 }
