@@ -18,7 +18,7 @@ public class Grid {
     this.player = player;
 
     beats = new ArrayList<>();
-    for (int i = 0; i <= bg.beatCount; i++) {
+    for (int i = 0; i < bg.beatCount; i++) {
       beats.add(new GridBeat(i + 1, bg.getTimeWithinTrack(i)));
     }
   }
