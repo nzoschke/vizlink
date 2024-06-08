@@ -6,7 +6,7 @@ on:
       - "v*.*.*"
 
 jobs:
-  release-arm64:
+  release-macos-arm64:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v3
@@ -18,7 +18,7 @@ jobs:
         with:
           files: vizlink-darwin-arm64
 
-  release-amd64:
+  release-macos-amd64:
     runs-on: macos-latest-large
     steps:
       - uses: actions/checkout@v3
@@ -29,3 +29,18 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           files: vizlink-darwin-amd64
+
+  release-windows-amd64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          make jdk-windows-amd64
+          [System.Environment]::SetEnvironmentVariable("JAVA_HOME", "$pwd\bellsoft-liberica-vm-core-openjdk21-23.1.2")
+          [System.Environment]::SetEnvironmentVariable("Path", [System.Environment]::GetEnvironmentVariable('Path', [System.EnvironmentVariableTarget]::Machine) + ";$pwd\apache-maven-3.9.7\bin")
+          mvn install -f vizlink/pom.xml
+          mvn package -f vizlink/pom.xml -Pnative -DskipTests
+          mv vizlink/target/vizlink vizlink-windows-amd64
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: vizlink-windows-amd64
