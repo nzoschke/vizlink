@@ -18,6 +18,8 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           make jdk-windows-amd64
-          [System.Environment]::SetEnvironmentVariable("JAVA_HOME", "bellsoft-liberica-vm-core-openjdk21-23.1.2")
+          [System.Environment]::SetEnvironmentVariable("JAVA_HOME", "$pwd\bellsoft-liberica-vm-core-openjdk21-23.1.2")
           [System.Environment]::SetEnvironmentVariable("Path", [System.Environment]::GetEnvironmentVariable('Path', [System.EnvironmentVariableTarget]::Machine) + ";$pwd\apache-maven-3.9.7\bin")
-          make
+          mvn install -f vizlink/pom.xml -q
+          mvn package -f vizlink/pom.xml -q -Pnative -DskipTests
+
