@@ -1,6 +1,7 @@
 package net.mixable.vizlink;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.SocketException;
 import java.nio.file.Files;
@@ -10,6 +11,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import net.mixable.vizlink.data.Art;
+import net.mixable.vizlink.data.Audio;
 import net.mixable.vizlink.data.CDJ;
 import net.mixable.vizlink.data.Cue;
 import net.mixable.vizlink.data.Device;
@@ -33,6 +35,7 @@ import org.deepsymmetry.beatlink.Beat;
 import org.deepsymmetry.beatlink.BeatFinder;
 import org.deepsymmetry.beatlink.BeatListener;
 import org.deepsymmetry.beatlink.CdjStatus;
+import org.deepsymmetry.beatlink.CdjStatus.TrackSourceSlot;
 import org.deepsymmetry.beatlink.DeviceAnnouncement;
 import org.deepsymmetry.beatlink.DeviceAnnouncementListener;
 import org.deepsymmetry.beatlink.DeviceFinder;
@@ -53,8 +56,10 @@ import org.deepsymmetry.beatlink.data.BeatGridListener;
 import org.deepsymmetry.beatlink.data.BeatGridUpdate;
 import org.deepsymmetry.beatlink.data.CrateDigger;
 import org.deepsymmetry.beatlink.data.CueList;
+import org.deepsymmetry.beatlink.data.DatabaseListener;
 import org.deepsymmetry.beatlink.data.DeckReference;
 import org.deepsymmetry.beatlink.data.MetadataFinder;
+import org.deepsymmetry.beatlink.data.SlotReference;
 import org.deepsymmetry.beatlink.data.TrackMetadata;
 import org.deepsymmetry.beatlink.data.TrackMetadataListener;
 import org.deepsymmetry.beatlink.data.TrackMetadataUpdate;
@@ -63,6 +68,9 @@ import org.deepsymmetry.beatlink.data.WaveformFinder;
 import org.deepsymmetry.beatlink.data.WaveformListener;
 import org.deepsymmetry.beatlink.data.WaveformPreview;
 import org.deepsymmetry.beatlink.data.WaveformPreviewUpdate;
+import org.deepsymmetry.cratedigger.Database;
+import org.deepsymmetry.cratedigger.FileFetcher;
+import org.deepsymmetry.cratedigger.pdb.RekordboxPdb.TrackRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,6 +172,44 @@ public class App {
             io.out(OM.string(new Message(new Sys("bye", 0), "sys")));
             scanner.close();
             System.exit(0);
+          }
+
+          if (sys.msg.equals("fetch")) {
+            TrackMetadata metadata = null;
+            for (Map.Entry<DeckReference, TrackMetadata> entry : MetadataFinder.getInstance().getLoadedTracks().entrySet()) {
+              DeckReference dr = entry.getKey();
+              if (dr.hotCue != 0) continue;
+              if (dr.player == sys.code) {
+                metadata = entry.getValue();
+                break;
+              }
+            }
+
+            if (metadata == null) {
+              continue;
+            }
+
+            DeviceAnnouncement player = DeviceFinder.getInstance().getLatestAnnouncementFrom(sys.code);
+            TrackSourceSlot slot = metadata.trackReference.slot;
+
+            Database db = CrateDigger.getInstance().findDatabase(metadata.trackReference);
+            TrackRow tr = db.trackIndex.get((long) metadata.trackReference.rekordboxId);
+
+            String mountPath = "/B/"; // SD_SLOT
+            if (slot == TrackSourceSlot.USB_SLOT) {
+              mountPath = "/C/";
+            }
+
+            String src = Database.getText(tr.filePath());
+            File dest = new File("/tmp", "audio");
+            try {
+              FileFetcher.getInstance().fetch(player.getAddress(), mountPath, src, dest);
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+
+            Audio a = new Audio(player.getDeviceNumber(), dest, src);
+            io.out(OM.string(new Message(a, "audio")));
           }
 
           if (sys.msg.equals("find")) {

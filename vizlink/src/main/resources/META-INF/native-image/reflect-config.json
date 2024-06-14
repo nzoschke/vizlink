@@ -6,6 +6,12 @@
     "allPublicMethods": true
   },
   {
+    "name": "net.mixable.vizlink.data.Audio",
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true
+  },
+  {
     "name": "net.mixable.vizlink.data.Beat",
     "allPublicConstructors": true,
     "allPublicFields": true,
