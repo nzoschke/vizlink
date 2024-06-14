@@ -167,6 +167,10 @@ public class App {
           }
 
           if (sys.msg.equals("find")) {
+            if (!VirtualCdj.getInstance().isRunning()) {
+              continue;
+            }
+
             if (DeviceFinder.getInstance().isRunning()) {
               for (DeviceAnnouncement ann : DeviceFinder.getInstance().getCurrentDevices()) {
                 DeviceUpdate du = VirtualCdj.getInstance().getLatestStatusFor(ann);
