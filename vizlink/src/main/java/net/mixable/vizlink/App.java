@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import net.mixable.vizlink.data.Art;
+import net.mixable.vizlink.data.Audio;
 import net.mixable.vizlink.data.CDJ;
 import net.mixable.vizlink.data.Cue;
 import net.mixable.vizlink.data.Device;
@@ -33,6 +36,7 @@ import org.deepsymmetry.beatlink.Beat;
 import org.deepsymmetry.beatlink.BeatFinder;
 import org.deepsymmetry.beatlink.BeatListener;
 import org.deepsymmetry.beatlink.CdjStatus;
+import org.deepsymmetry.beatlink.CdjStatus.TrackSourceSlot;
 import org.deepsymmetry.beatlink.DeviceAnnouncement;
 import org.deepsymmetry.beatlink.DeviceAnnouncementListener;
 import org.deepsymmetry.beatlink.DeviceFinder;
@@ -53,6 +57,7 @@ import org.deepsymmetry.beatlink.data.BeatGridListener;
 import org.deepsymmetry.beatlink.data.BeatGridUpdate;
 import org.deepsymmetry.beatlink.data.CrateDigger;
 import org.deepsymmetry.beatlink.data.CueList;
+import org.deepsymmetry.beatlink.data.DataReference;
 import org.deepsymmetry.beatlink.data.DeckReference;
 import org.deepsymmetry.beatlink.data.MetadataFinder;
 import org.deepsymmetry.beatlink.data.TrackMetadata;
@@ -63,6 +68,9 @@ import org.deepsymmetry.beatlink.data.WaveformFinder;
 import org.deepsymmetry.beatlink.data.WaveformListener;
 import org.deepsymmetry.beatlink.data.WaveformPreview;
 import org.deepsymmetry.beatlink.data.WaveformPreviewUpdate;
+import org.deepsymmetry.cratedigger.Database;
+import org.deepsymmetry.cratedigger.FileFetcher;
+import org.deepsymmetry.cratedigger.pdb.RekordboxPdb.TrackRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,6 +166,7 @@ public class App {
           Sys sys = OM.sys(m);
           if (sys.msg.equals("echo")) {
             io.out(OM.string(new Message(sys, "sys")));
+            continue;
           }
 
           if (sys.msg.equals("exit")) {
@@ -166,7 +175,63 @@ public class App {
             System.exit(0);
           }
 
+          if (sys.msg.equals("fetch")) {
+            if (!VirtualCdj.getInstance().isRunning()) {
+              continue;
+            }
+
+            Integer pn = sys.code;
+            TrackMetadata tm = null;
+            for (Map.Entry<DeckReference, TrackMetadata> entry : MetadataFinder.getInstance().getLoadedTracks().entrySet()) {
+              DeckReference dr = entry.getKey();
+              if (dr.hotCue != 0) continue;
+              if (dr.player == pn) {
+                tm = entry.getValue();
+                break;
+              }
+            }
+
+            if (tm == null) {
+              continue;
+            }
+
+            DataReference dr = tm.trackReference;
+            DeviceAnnouncement player = DeviceFinder.getInstance().getLatestAnnouncementFrom(dr.player);
+
+            String mountPath = "/B/"; // SD_SLOT
+            if (dr.slot == TrackSourceSlot.USB_SLOT) {
+              mountPath = "/C/";
+            }
+
+            Database db = CrateDigger.getInstance().findDatabase(tm.trackReference);
+            TrackRow tr = db.trackIndex.get((long) tm.trackReference.rekordboxId);
+            String src = Database.getText(tr.filePath());
+
+            String dir = Paths.get(System.getProperty("user.home"), "Music", "VizLab").toString();
+            new File(dir).mkdirs();
+
+            File dest = new File(dir, new File(src).getName());
+            File part = new File(dest.getAbsolutePath() + ".part");
+
+            if (!dest.exists()) {
+              try {
+                FileFetcher.getInstance().fetch(player.getAddress(), mountPath, src, part);
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+
+              part.renameTo(dest);
+            }
+
+            Audio a = new Audio(pn, tm, dest.getAbsolutePath(), src);
+            io.out(OM.string(new Message(a, "audio")));
+          }
+
           if (sys.msg.equals("find")) {
+            if (!VirtualCdj.getInstance().isRunning()) {
+              continue;
+            }
+
             if (DeviceFinder.getInstance().isRunning()) {
               for (DeviceAnnouncement ann : DeviceFinder.getInstance().getCurrentDevices()) {
                 DeviceUpdate du = VirtualCdj.getInstance().getLatestStatusFor(ann);
