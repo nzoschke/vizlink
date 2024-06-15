@@ -40,7 +40,13 @@ See events on stdout.
 Send commands on stdin.
 
 ```json
+// find loaded tracks
 {"payload":{"msg":"find"},"type":"sys"}
+
+// fetch audio file loaded in player
+{"payload":{"msg":"fetch","code":1},"type":"sys"}
+
+// change player onAir status
 {"payload":{"player":1,"onAir":true},"type":"cdj"}
 ```
 
