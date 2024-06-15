@@ -1,10 +1,11 @@
 package net.mixable.vizlink;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.SocketException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
@@ -57,10 +58,8 @@ import org.deepsymmetry.beatlink.data.BeatGridUpdate;
 import org.deepsymmetry.beatlink.data.CrateDigger;
 import org.deepsymmetry.beatlink.data.CueList;
 import org.deepsymmetry.beatlink.data.DataReference;
-import org.deepsymmetry.beatlink.data.DatabaseListener;
 import org.deepsymmetry.beatlink.data.DeckReference;
 import org.deepsymmetry.beatlink.data.MetadataFinder;
-import org.deepsymmetry.beatlink.data.SlotReference;
 import org.deepsymmetry.beatlink.data.TrackMetadata;
 import org.deepsymmetry.beatlink.data.TrackMetadataListener;
 import org.deepsymmetry.beatlink.data.TrackMetadataUpdate;
@@ -167,6 +166,7 @@ public class App {
           Sys sys = OM.sys(m);
           if (sys.msg.equals("echo")) {
             io.out(OM.string(new Message(sys, "sys")));
+            continue;
           }
 
           if (sys.msg.equals("exit")) {
@@ -176,11 +176,16 @@ public class App {
           }
 
           if (sys.msg.equals("fetch")) {
+            if (!VirtualCdj.getInstance().isRunning()) {
+              continue;
+            }
+
+            Integer pn = sys.code;
             TrackMetadata tm = null;
             for (Map.Entry<DeckReference, TrackMetadata> entry : MetadataFinder.getInstance().getLoadedTracks().entrySet()) {
               DeckReference dr = entry.getKey();
               if (dr.hotCue != 0) continue;
-              if (dr.player == sys.code) {
+              if (dr.player == pn) {
                 tm = entry.getValue();
                 break;
               }
@@ -192,25 +197,33 @@ public class App {
 
             DataReference dr = tm.trackReference;
             DeviceAnnouncement player = DeviceFinder.getInstance().getLatestAnnouncementFrom(dr.player);
-            TrackSourceSlot slot = dr.slot;
 
             String mountPath = "/B/"; // SD_SLOT
-            if (slot == TrackSourceSlot.USB_SLOT) {
+            if (dr.slot == TrackSourceSlot.USB_SLOT) {
               mountPath = "/C/";
             }
 
             Database db = CrateDigger.getInstance().findDatabase(tm.trackReference);
             TrackRow tr = db.trackIndex.get((long) tm.trackReference.rekordboxId);
             String src = Database.getText(tr.filePath());
-            File dest = new File("/tmp", new File(src).getName());
 
-            try {
-              FileFetcher.getInstance().fetch(player.getAddress(), mountPath, src, dest);
-            } catch (IOException e) {
-              e.printStackTrace();
+            String dir = Paths.get(System.getProperty("user.home"), "Music", "VizLab").toString();
+            new File(dir).mkdirs();
+
+            File dest = new File(dir, new File(src).getName());
+            File part = new File(dest.getAbsolutePath() + ".part");
+
+            if (!dest.exists()) {
+              try {
+                FileFetcher.getInstance().fetch(player.getAddress(), mountPath, src, part);
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+
+              part.renameTo(dest);
             }
 
-            Audio a = new Audio(player.getDeviceNumber(), dest.getAbsolutePath(), src);
+            Audio a = new Audio(pn, tm, dest.getAbsolutePath(), src);
             io.out(OM.string(new Message(a, "audio")));
           }
 
