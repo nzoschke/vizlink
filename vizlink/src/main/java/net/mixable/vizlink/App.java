@@ -56,6 +56,7 @@ import org.deepsymmetry.beatlink.data.BeatGridListener;
 import org.deepsymmetry.beatlink.data.BeatGridUpdate;
 import org.deepsymmetry.beatlink.data.CrateDigger;
 import org.deepsymmetry.beatlink.data.CueList;
+import org.deepsymmetry.beatlink.data.DataReference;
 import org.deepsymmetry.beatlink.data.DatabaseListener;
 import org.deepsymmetry.beatlink.data.DeckReference;
 import org.deepsymmetry.beatlink.data.MetadataFinder;
@@ -175,40 +176,41 @@ public class App {
           }
 
           if (sys.msg.equals("fetch")) {
-            TrackMetadata metadata = null;
+            TrackMetadata tm = null;
             for (Map.Entry<DeckReference, TrackMetadata> entry : MetadataFinder.getInstance().getLoadedTracks().entrySet()) {
               DeckReference dr = entry.getKey();
               if (dr.hotCue != 0) continue;
               if (dr.player == sys.code) {
-                metadata = entry.getValue();
+                tm = entry.getValue();
                 break;
               }
             }
 
-            if (metadata == null) {
+            if (tm == null) {
               continue;
             }
 
-            DeviceAnnouncement player = DeviceFinder.getInstance().getLatestAnnouncementFrom(sys.code);
-            TrackSourceSlot slot = metadata.trackReference.slot;
-
-            Database db = CrateDigger.getInstance().findDatabase(metadata.trackReference);
-            TrackRow tr = db.trackIndex.get((long) metadata.trackReference.rekordboxId);
+            DataReference dr = tm.trackReference;
+            DeviceAnnouncement player = DeviceFinder.getInstance().getLatestAnnouncementFrom(dr.player);
+            TrackSourceSlot slot = dr.slot;
 
             String mountPath = "/B/"; // SD_SLOT
             if (slot == TrackSourceSlot.USB_SLOT) {
               mountPath = "/C/";
             }
 
+            Database db = CrateDigger.getInstance().findDatabase(tm.trackReference);
+            TrackRow tr = db.trackIndex.get((long) tm.trackReference.rekordboxId);
             String src = Database.getText(tr.filePath());
-            File dest = new File("/tmp", "audio");
+            File dest = new File("/tmp", new File(src).getName());
+
             try {
               FileFetcher.getInstance().fetch(player.getAddress(), mountPath, src, dest);
             } catch (IOException e) {
               e.printStackTrace();
             }
 
-            Audio a = new Audio(player.getDeviceNumber(), dest, src);
+            Audio a = new Audio(player.getDeviceNumber(), dest.getAbsolutePath(), src);
             io.out(OM.string(new Message(a, "audio")));
           }
 

@@ -1,26 +1,17 @@
 package net.mixable.vizlink.data;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Base64;
-
 // see also reflect-config.json
 public class Audio {
 
-  public String bytes;
-  public String name;
+  public String dest;
   public Integer player;
+  public String src;
 
   public Audio() {}
 
-  public Audio(Integer player, java.io.File f, String name) {
-    try {
-      this.bytes = new String(Base64.getEncoder().encodeToString(Files.readAllBytes(f.toPath())));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
+  public Audio(Integer player, String dest, String src) {
     this.player = player;
-    this.name = name;
+    this.dest = dest;
+    this.src = src;
   }
 }
