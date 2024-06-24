@@ -461,7 +461,7 @@ public class App {
               System.err.println("BeatFinder.newBeat: " + beat);
               System.err.println("BeatFinder.cdjStatus: " + s);
 
-              net.mixable.vizlink.data.Beat b = new net.mixable.vizlink.data.Beat(cdj.beat, cdj.onAir, cdj.player);
+              net.mixable.vizlink.data.Beat b = new net.mixable.vizlink.data.Beat(s);
               io.out(OM.string(new Message(b, "beat")));
             }
 
