@@ -9,20 +9,23 @@ import org.deepsymmetry.cratedigger.pdb.RekordboxAnlz.SongStructureEntry;
 public class StructurePhrase {
 
   public Integer beat;
+  public Integer beats;
   public String kind;
 
   public StructurePhrase() {}
 
-  public StructurePhrase(SongStructureEntry e) {
+  public StructurePhrase(SongStructureEntry e, int endBeat) {
     beat = e.beat();
+    beats = endBeat - beat;
+
     if (e.kind() instanceof PhraseHigh) {
-      kind = "high/" + ((PhraseHigh) e.kind()).id().name().toLowerCase();
+      kind = ((PhraseHigh) e.kind()).id().name().toLowerCase();
     }
     if (e.kind() instanceof PhraseMid) {
-      kind = "mid/" + ((PhraseMid) e.kind()).id().name().toLowerCase();
+      kind = ((PhraseMid) e.kind()).id().name().toLowerCase();
     }
     if (e.kind() instanceof PhraseLow) {
-      kind = "low/" + ((PhraseLow) e.kind()).id().name().toLowerCase();
+      kind = ((PhraseLow) e.kind()).id().name().toLowerCase();
     }
   }
 }

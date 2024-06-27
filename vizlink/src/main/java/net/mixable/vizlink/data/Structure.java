@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.deepsymmetry.cratedigger.pdb.RekordboxAnlz;
 import org.deepsymmetry.cratedigger.pdb.RekordboxAnlz.SectionTags;
 import org.deepsymmetry.cratedigger.pdb.RekordboxAnlz.SongStructureBody;
+import org.deepsymmetry.cratedigger.pdb.RekordboxAnlz.SongStructureEntry;
 
 // see also reflect-config.json
 public class Structure {
@@ -38,8 +39,17 @@ public class Structure {
     mood = b.mood().name().toLowerCase();
 
     phrases = new ArrayList<>();
-    for (RekordboxAnlz.SongStructureEntry e : ss.body().entries()) {
-      phrases.add(new StructurePhrase(e));
+
+    ArrayList<SongStructureEntry> entries = ss.body().entries();
+    for (int i = 0; i < entries.size(); i++) {
+      RekordboxAnlz.SongStructureEntry e = entries.get(i);
+
+      int endBeat = b.endBeat();
+      if (i < entries.size() - 1) {
+        endBeat = entries.get(i + 1).beat();
+      }
+
+      phrases.add(new StructurePhrase(e, endBeat));
     }
   }
 }
