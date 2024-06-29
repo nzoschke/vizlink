@@ -236,7 +236,7 @@ public class App {
               for (DeviceAnnouncement ann : DeviceFinder.getInstance().getCurrentDevices()) {
                 DeviceUpdate du = VirtualCdj.getInstance().getLatestStatusFor(ann);
                 if (!(du instanceof CdjStatus)) {
-                  return;
+                  continue;
                 }
 
                 CDJ p = new CDJ((CdjStatus) du);
