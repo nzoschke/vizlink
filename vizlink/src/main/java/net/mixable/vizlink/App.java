@@ -567,13 +567,6 @@ public class App {
       return;
     }
 
-    // echo back the command for testing purposes
-    if (!VirtualCdj.getInstance().isRunning()) {
-      CDJ cdj = new CDJ(onAir, player);
-      io.out(OM.string(new Message(cdj, "cdj")));
-      return;
-    }
-
     Set<Integer> current = new HashSet<>();
     for (Map.Entry<Integer, Boolean> entry : onAirs.entrySet()) {
       if (entry.getValue()) {
@@ -596,7 +589,6 @@ public class App {
         DeviceUpdate du = VirtualCdj.getInstance().getLatestStatusFor(player);
         CDJ cdj = new CDJ((CdjStatus) du);
         cdj.onAir = onAir;
-        io.out(OM.string(new Message(cdj, "cdj")));
       } catch (IOException e) {
         e.printStackTrace();
       }
