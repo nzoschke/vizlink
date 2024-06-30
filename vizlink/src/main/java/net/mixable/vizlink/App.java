@@ -89,7 +89,7 @@ public class App {
   public static void main(String[] args) throws IOException, InterruptedException, ParseException {
     Options options = new Options();
     options.addOption("h", "help", false, "help");
-    options.addOption("n", "number", true, "virtual CDJ player number (default 4)");
+    options.addOption("n", "number", true, "virtual CDJ player number (default 7)");
     options.addOption("r", "rpc", true, "RPC");
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd = parser.parse(options, args);
@@ -108,7 +108,7 @@ public class App {
       System.exit(0);
     }
 
-    int number = Integer.parseInt(coalesce(cmd.getOptionValue("n"), "4"));
+    int number = Integer.parseInt(coalesce(cmd.getOptionValue("n"), "7"));
 
     ioListen(io);
     stdioPipe(io);
