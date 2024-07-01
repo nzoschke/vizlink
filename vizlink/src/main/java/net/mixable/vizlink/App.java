@@ -82,6 +82,7 @@ public class App {
   static Map<Integer, Map<Number, String>> beatCues = new ConcurrentHashMap<Integer, Map<Number, String>>();
   static Map<Integer, Map<Number, String>> beatPhrases = new ConcurrentHashMap<Integer, Map<Number, String>>();
   static Map<Integer, String> banks = new ConcurrentHashMap<Integer, String>();
+  static Map<Integer, String> moods = new ConcurrentHashMap<Integer, String>();
   static Map<Integer, Boolean> onAirs = new ConcurrentHashMap<Integer, Boolean>();
 
   static Thread vcdjThread = null;
@@ -421,6 +422,7 @@ public class App {
             }
 
             banks.put(update.player, s.bank);
+            moods.put(update.player, s.mood);
             beatPhrases.put(update.player, phrases);
           }
         },
@@ -474,7 +476,7 @@ public class App {
 
             Map<Number, String> phrases = beatPhrases.get(cdj.player);
             if (phrases != null && phrases.containsKey(cdj.beat)) {
-              Phrase p = new Phrase(banks.get(cdj.player), cdj.beat, phrases.get(cdj.beat), cdj.master, cdj.onAir, cdj.player);
+              Phrase p = new Phrase(banks.get(cdj.player), cdj.beat, phrases.get(cdj.beat), cdj.master, moods.get(cdj.player), cdj.onAir, cdj.player);
               io.out(OM.string(new Message(p, "phrase")));
             }
           }
