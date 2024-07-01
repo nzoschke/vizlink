@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
@@ -82,6 +81,8 @@ public class App {
   // maps of player number -> significant beats and status
   static Map<Integer, Map<Number, String>> beatCues = new ConcurrentHashMap<Integer, Map<Number, String>>();
   static Map<Integer, Map<Number, String>> beatPhrases = new ConcurrentHashMap<Integer, Map<Number, String>>();
+  static Map<Integer, String> banks = new ConcurrentHashMap<Integer, String>();
+  static Map<Integer, String> moods = new ConcurrentHashMap<Integer, String>();
   static Map<Integer, Boolean> onAirs = new ConcurrentHashMap<Integer, Boolean>();
 
   static Thread vcdjThread = null;
@@ -89,7 +90,7 @@ public class App {
   public static void main(String[] args) throws IOException, InterruptedException, ParseException {
     Options options = new Options();
     options.addOption("h", "help", false, "help");
-    options.addOption("n", "number", true, "virtual CDJ player number (default 4)");
+    options.addOption("n", "number", true, "virtual CDJ player number (default 7)");
     options.addOption("r", "rpc", true, "RPC");
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd = parser.parse(options, args);
@@ -108,7 +109,7 @@ public class App {
       System.exit(0);
     }
 
-    int number = Integer.parseInt(coalesce(cmd.getOptionValue("n"), "4"));
+    int number = Integer.parseInt(coalesce(cmd.getOptionValue("n"), "7"));
 
     ioListen(io);
     stdioPipe(io);
@@ -420,6 +421,8 @@ public class App {
               phrases.put(p.beat, p.kind);
             }
 
+            banks.put(update.player, s.bank);
+            moods.put(update.player, s.mood);
             beatPhrases.put(update.player, phrases);
           }
         },
@@ -467,13 +470,13 @@ public class App {
 
             Map<Number, String> cues = beatCues.get(cdj.player);
             if (cues != null && cues.containsKey(cdj.beat)) {
-              Cue c = new Cue(cdj.beat, cues.get(cdj.beat), cdj.onAir, cdj.player);
+              Cue c = new Cue(cdj.beat, cues.get(cdj.beat), cdj.master, cdj.onAir, cdj.player);
               io.out(OM.string(new Message(c, "cue")));
             }
 
             Map<Number, String> phrases = beatPhrases.get(cdj.player);
             if (phrases != null && phrases.containsKey(cdj.beat)) {
-              Phrase p = new Phrase(cdj.beat, phrases.get(cdj.beat), cdj.onAir, cdj.player);
+              Phrase p = new Phrase(banks.get(cdj.player), cdj.beat, phrases.get(cdj.beat), cdj.master, moods.get(cdj.player), cdj.onAir, cdj.player);
               io.out(OM.string(new Message(p, "phrase")));
             }
           }
@@ -567,13 +570,6 @@ public class App {
       return;
     }
 
-    // echo back the command for testing purposes
-    if (!VirtualCdj.getInstance().isRunning()) {
-      CDJ cdj = new CDJ(onAir, player);
-      io.out(OM.string(new Message(cdj, "cdj")));
-      return;
-    }
-
     Set<Integer> current = new HashSet<>();
     for (Map.Entry<Integer, Boolean> entry : onAirs.entrySet()) {
       if (entry.getValue()) {
@@ -596,7 +592,6 @@ public class App {
         DeviceUpdate du = VirtualCdj.getInstance().getLatestStatusFor(player);
         CDJ cdj = new CDJ((CdjStatus) du);
         cdj.onAir = onAir;
-        io.out(OM.string(new Message(cdj, "cdj")));
       } catch (IOException e) {
         e.printStackTrace();
       }
