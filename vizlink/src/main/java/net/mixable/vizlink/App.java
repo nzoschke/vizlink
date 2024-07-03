@@ -297,7 +297,7 @@ public class App {
         if (m.type.equals("cdj")) {
           CDJ cdj = OM.cdj(m);
           if (cdj != null) {
-            onAirUpdate(io, cdj.player, cdj.onAir);
+            onAirUpdate(cdj.player, cdj.onAir);
           }
         }
       }
@@ -379,14 +379,6 @@ public class App {
     if (ok) {
       io.out(OM.string(new Message(new Sys("vcdj", number), "sys")));
 
-      for (DeviceAnnouncement ann : DeviceFinder.getInstance().getCurrentDevices()) {
-        DeviceUpdate u = VirtualCdj.getInstance().getLatestStatusFor(ann);
-        if (u instanceof CdjStatus) {
-          CdjStatus s = (CdjStatus) u;
-          onAirs.put(s.getDeviceNumber(), s.isOnAir());
-        }
-      }
-
       MetadataFinder.getInstance().setPassive(true);
       if (number >= 1 && number <= 4) {
         MetadataFinder.getInstance().setPassive(false);
@@ -456,8 +448,6 @@ public class App {
 
             CdjStatus s = (CdjStatus) du;
             CDJ cdj = new CDJ(s);
-
-            onAirUpdate(io, cdj.player, cdj.onAir);
 
             // publish beats that are downbeat, cues or phrases
             if (beat.getBeatWithinBar() == 1) {
@@ -565,8 +555,8 @@ public class App {
       );
   }
 
-  public static synchronized void onAirUpdate(IO io, Integer player, Boolean onAir) {
-    if (onAirs.get(player) == onAir) {
+  public static synchronized void onAirUpdate(Integer player, Boolean onAir) {
+    if (!VirtualCdj.getInstance().isRunning()) {
       return;
     }
 
