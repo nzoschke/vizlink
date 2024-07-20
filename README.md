@@ -20,7 +20,7 @@ Download an install the latest release.
 
 ```bash
 DEST=/opt/homebrew/bin/vizlink
-curl -Lo $DEST https://github.com/nzoschke/vizlink/releases/latest/download/vizlink-darwin-arm64 && chmod +x $DEST
+curl -L https://github.com/nzoschke/vizlink/releases/latest/download/vizlink-darwin-arm64.zip | funzip > $DEST && chmod +x $DEST
 ```
 
 Run VizLink. You must close Rekordbox.app first since VizLink requires the same port to talk to CDJs.
