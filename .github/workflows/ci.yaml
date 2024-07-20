@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: HelloWorld on ${{ matrix.os }}
+    name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -22,13 +22,15 @@ jobs:
           java-version: "21"
           native-image-job-reports: "true"
 
-      - name: build vizlink
-        run: |
+      - run: |
           mvn install -f vizlink/pom.xml -q
           mvn package -f vizlink/pom.xml -q -Pnative -DskipTests
 
-      - name: Upload binary
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: vizlink-${{ matrix.os }}
-          path: vizlink/target/*
+          path: |
+            vizlink/target/vizlink
+            vizlink/target/vizlink.exe
+            vizlink/target/*.dll
+            vizlink/target/*.so
