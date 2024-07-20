@@ -4,7 +4,7 @@ Part of [VizLab](https://vizlab.app), the easiest way for DJs to create visuals 
 
 To get started:
 
-1. Download latest release (or make from source)
+1. [Download latest release](https://github.com/nzoschke/vizlink/releases/latest)
 2. Run `vizlink` (and make sure Rekordbox.app is not running)
 3. Connect your computer to a Pioneer Pro Link network and CDJs
 
@@ -53,7 +53,7 @@ Send commands on stdin.
 Invoke one-off RPC commands.
 
 ```bash
-./vizlink/target/vizlink -r '{"fn":"structure","args":["/Users/noah/Library/Pioneer/rekordbox/share/PIONEER/USBANLZ/f6c/ac4e8-f264-481d-b81c-fd16538c4bc2/ANLZ0000.EXT"]}'
+vizlink -r '{"fn":"structure","args":["/Users/noah/Library/Pioneer/rekordbox/share/PIONEER/USBANLZ/f6c/ac4e8-f264-481d-b81c-fd16538c4bc2/ANLZ0000.EXT"]}'
 ```
 
 ```json
@@ -84,7 +84,7 @@ This project uses [GraalVM JDK Native Image](https://www.graalvm.org/latest/refe
 ## Development
 
 ```bash
-mvn exec:java -f vizlink/pom.xml -Dexec.mainClass="net.mixable.vizlink.App"
+mvn exec:java -f pom.xml -Dexec.mainClass="net.mixable.vizlink.App"
 ```
 
 Local native build requires an M1+ Mac:
@@ -98,5 +98,7 @@ Scaffolding was provided by a maven archetype and prettier:
 ```bash
 brew install maven pnpm
 mvn archetype:generate -DgroupId=net.mixable.vizlink -DartifactId=vizlink -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false
-make prettier
+cd vizlink
+pnpm install -D @prettier/plugin-xml prettier prettier-plugin-java
+pnpm prettier --plugin @prettier/plugin-xml --plugin prettier-plugin-java -w .
 ```
