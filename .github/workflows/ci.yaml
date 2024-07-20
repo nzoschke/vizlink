@@ -22,18 +22,13 @@ jobs:
           java-version: "21"
           native-image-job-reports: "true"
 
-      - name: Build and run HelloWorld.java
+      - name: build vizlink
         run: |
           mvn install -f vizlink/pom.xml -q
           mvn package -f vizlink/pom.xml -q -Pnative -DskipTests
 
-          echo 'public class HelloWorld { public static void main(String[] args) { System.out.println("Hello, World!"); } }' > HelloWorld.java
-          javac HelloWorld.java
-          native-image HelloWorld
-          ./helloworld
-
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: helloworld-${{ matrix.os }}
-          path: helloworld*
+          name: vizlink-${{ matrix.os }}
+          path: vizlink/target/vizlink
