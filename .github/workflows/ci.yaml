@@ -16,10 +16,12 @@ jobs:
 
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '21'
-          distribution: 'graalvm'
+          cache: "maven"
+          distribution: "liberica"
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          native-image-job-reports: 'true'
+          java-version: "21"
+          native-image-job-reports: "true"
+          native-image-musl: "true"
 
       - name: Build and run HelloWorld.java
         run: |
@@ -27,9 +29,9 @@ jobs:
           javac HelloWorld.java
           native-image HelloWorld
           ./helloworld
-      
+
       - name: Upload binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: helloworld-${{ matrix.os }}
           path: helloworld*
