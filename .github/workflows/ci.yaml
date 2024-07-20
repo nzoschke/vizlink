@@ -6,12 +6,20 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os.arch }}
+    runs-on: ${{ matrix.os.image }}
     strategy:
       matrix:
-        os: [macos-latest, macos-latest-large, windows-latest, ubuntu-latest]
-        arch: [darwin-arm64, darwin-amd64, windows-amd64, ubuntu-amd64]
+        os:
+          - arch: darwin-arm64
+            image: macos-latest
+          - arch: darwin-amd64
+            image: macos-latest-large
+          - arch: windows-amd64
+            image: windows-latest
+          - arch: linux-amd64
+            image: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -29,7 +37,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: vizlink-${{ matrix.arch }}
+          name: vizlink-${{ matrix.os.arch }}
           path: |
             vizlink/target/vizlink
             vizlink/target/vizlink.exe
