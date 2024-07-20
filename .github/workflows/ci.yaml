@@ -19,7 +19,7 @@ jobs:
             zip: zip vizlink.zip vizlink/target/vizlink
           - arch: windows-amd64
             image: windows-latest
-            zip: Compress-Archive -Path vizlink/target/vizlink.exe vizlink/target/*.dll -Destination vizlink.zip
+            zip: Compress-Archive -Path vizlink/target/vizlink.exe, vizlink/target/*.dll -Destination vizlink.zip
           - arch: linux-amd64
             image: ubuntu-latest
             zip: zip vizlink.zip vizlink/target/vizlink vizlink/target/*.so
@@ -43,9 +43,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: vizlink-${{ matrix.os.arch }}
-          path: |
-            vizlink/target/vizlink
-            vizlink/target/vizlink.exe
-            vizlink/target/*.dll
-            vizlink/target/*.so
+          name: vizlink-${{ matrix.os.arch }}.zip
+          path: vizlink.zip
