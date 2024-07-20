@@ -3,6 +3,8 @@ name: CI
 on:
   pull_request:
     branches: ["main"]
+  push:
+    tags: ["v*.*.*"]
 
 jobs:
   build:
@@ -13,16 +15,16 @@ jobs:
         os:
           - arch: darwin-arm64
             image: macos-latest
-            zip: zip -j vizlink.zip vizlink/target/vizlink
+            zip: zip -j vizlink-darwin-arm64.zip vizlink/target/vizlink
           - arch: darwin-amd64
             image: macos-latest-large
-            zip: zip -j vizlink.zip vizlink/target/vizlink
+            zip: zip -j vizlink-darwin-amd64.zip vizlink/target/vizlink
           - arch: windows-amd64
             image: windows-latest
-            zip: Compress-Archive -Destination vizlink.zip -Path vizlink/target/vizlink.exe, vizlink/target/*.dll
+            zip: Compress-Archive -Destination vizlink-windows-amd64.zip -Path vizlink/target/vizlink.exe, vizlink/target/*.dll
           - arch: linux-amd64
             image: ubuntu-latest
-            zip: zip -j vizlink.zip vizlink/target/vizlink vizlink/target/*.so
+            zip: zip -j vizlink-linux-amd64.zip vizlink/target/vizlink vizlink/target/*.so
 
     steps:
       - uses: actions/checkout@v4
@@ -44,4 +46,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: vizlink-${{ matrix.os.arch }}
-          path: vizlink.zip
+          path: vizlink-${{ matrix.os.arch }}.zip
+
+      - if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: vizlink-${{ matrix.os.arch }}.zip
