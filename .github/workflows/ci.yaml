@@ -21,7 +21,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           java-version: "21"
           native-image-job-reports: "true"
-          native-image-musl: "true"
 
       - name: Build and run HelloWorld.java
         run: |
