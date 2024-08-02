@@ -30,6 +30,10 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -40,9 +44,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.deepsymmetry</groupId>
+      <groupId>com.github.nzoschke</groupId>
       <artifactId>beat-link</artifactId>
-      <version>7.4.0-SNAPSHOT</version>
+      <version>main-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
