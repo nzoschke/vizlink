@@ -1,6 +1,7 @@
 package net.mixable.vizlink;
 
 import java.io.IOException;
+import java.util.Scanner;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -39,6 +40,19 @@ public class App {
 
     int number = Integer.parseInt(coalesce(cmd.getOptionValue("n"), "7"));
     VizLink.start(io, number);
+    stdioPipe(io);
+  }
+
+  public static void stdioPipe(IO io) {
+    new Thread(() -> {
+      System.err.println("stdioPipe");
+      try (Scanner scanner = new Scanner(System.in)) {
+        while (true) {
+          String line = scanner.nextLine();
+          io.in(line);
+        }
+      }
+    }).start();
   }
 
   public static String coalesce(String val, String def) {

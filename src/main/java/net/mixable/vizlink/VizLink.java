@@ -78,7 +78,6 @@ public class VizLink {
 
   public static void start(IO io, int number) {
     ioListen(io);
-    stdioPipe(io);
     beatLinkListen(io);
     beatLinkStartDeviceFinder(io, number);
 
@@ -104,18 +103,6 @@ public class VizLink {
       Structure s = new Structure(bs);
       io.out(OM.string(new Message(s, "structure")));
     }
-  }
-
-  public static void stdioPipe(IO io) {
-    new Thread(() -> {
-      System.err.println("stdioPipe");
-      try (Scanner scanner = new Scanner(System.in)) {
-        while (true) {
-          String line = scanner.nextLine();
-          io.in(line);
-        }
-      }
-    }).start();
   }
 
   public static void ioListen(IO io) {
