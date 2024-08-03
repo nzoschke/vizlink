@@ -80,14 +80,6 @@ public class VizLink {
     ioListen(io);
     beatLinkListen(io);
     beatLinkStartDeviceFinder(io, number);
-
-    while (true) {
-      try {
-        Thread.sleep(60000);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    }
   }
 
   public static void rpc(IO io, String payload) throws IOException {

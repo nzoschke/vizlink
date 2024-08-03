@@ -29,6 +29,8 @@ public class App {
       return;
     }
 
+    int number = Integer.parseInt(coalesce(cmd.getOptionValue("n"), "7"));
+
     IO io = new IO(out -> {
       System.out.println(out);
     });
@@ -38,9 +40,16 @@ public class App {
       System.exit(0);
     }
 
-    int number = Integer.parseInt(coalesce(cmd.getOptionValue("n"), "7"));
-    VizLink.start(io, number);
     stdioPipe(io);
+    VizLink.start(io, number);
+
+    while (true) {
+      try {
+        Thread.sleep(60000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   public static void stdioPipe(IO io) {
