@@ -39,7 +39,7 @@ See events on stdout.
 
 Send commands on stdin.
 
-```json
+```jsonc
 // find loaded tracks
 {"payload":{"msg":"find"},"type":"sys"}
 
@@ -84,7 +84,7 @@ This project uses [GraalVM JDK Native Image](https://www.graalvm.org/latest/refe
 ## Development
 
 ```bash
-mvn exec:java -f pom.xml -Dexec.mainClass="net.mixable.vizlink.App"
+mvn exec:java -f pom.xml -Dexec.mainClass="net.mixable.vizlink.App" -Dexec.args="--help"
 ```
 
 Local native build requires an M1+ Mac:

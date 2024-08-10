@@ -6,9 +6,10 @@
 >
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>net.mixable.vizlink</groupId>
+  <groupId>net.mixable</groupId>
   <artifactId>vizlink</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
   <name>vizlink</name>
   <url>https://vizlab.app</url>
@@ -29,6 +30,10 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -41,7 +46,7 @@
     <dependency>
       <groupId>org.deepsymmetry</groupId>
       <artifactId>beat-link</artifactId>
-      <version>7.4.0-SNAPSHOT</version>
+      <version>8.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
