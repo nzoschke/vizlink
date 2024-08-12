@@ -35,6 +35,7 @@ import org.deepsymmetry.beatlink.DeviceAnnouncementListener;
 import org.deepsymmetry.beatlink.DeviceFinder;
 import org.deepsymmetry.beatlink.DeviceUpdate;
 import org.deepsymmetry.beatlink.MediaDetails;
+import org.deepsymmetry.beatlink.OnAirListener;
 import org.deepsymmetry.beatlink.VirtualCdj;
 import org.deepsymmetry.beatlink.data.AlbumArt;
 import org.deepsymmetry.beatlink.data.AlbumArtListener;
@@ -417,6 +418,20 @@ public class VizLink {
             if (phrases != null && phrases.containsKey(cdj.beat)) {
               Phrase p = new Phrase(banks.get(cdj.player), cdj.beat, phrases.get(cdj.beat), cdj.master, moods.get(cdj.player), cdj.onAir, cdj.player);
               io.out(OM.string(new Message(p, "phrase")));
+            }
+          }
+        }
+      );
+
+    BeatFinder.getInstance()
+      .addOnAirListener(
+        new OnAirListener() {
+          @Override
+          public void channelsOnAir(Set<Integer> audibleChannels) {
+            for (Integer n : audibleChannels) {
+              DeviceUpdate du = VirtualCdj.getInstance().getLatestStatusFor(n);
+              CDJ cdj = new CDJ((CdjStatus) du);
+              io.out(OM.string(new Message(cdj, "cdj")));
             }
           }
         }
