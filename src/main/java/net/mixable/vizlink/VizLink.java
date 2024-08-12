@@ -74,6 +74,7 @@ public class VizLink {
   static Map<Integer, String> banks = new ConcurrentHashMap<Integer, String>();
   static Map<Integer, String> moods = new ConcurrentHashMap<Integer, String>();
   static Map<Integer, Boolean> onAirs = new ConcurrentHashMap<Integer, Boolean>();
+  static Set<Integer> onAirChannels = new HashSet<>();
 
   static Thread vcdjThread = null;
 
@@ -428,10 +429,19 @@ public class VizLink {
         new OnAirListener() {
           @Override
           public void channelsOnAir(Set<Integer> audibleChannels) {
-            for (Integer n : audibleChannels) {
-              DeviceUpdate du = VirtualCdj.getInstance().getLatestStatusFor(n);
-              CDJ cdj = new CDJ((CdjStatus) du);
-              io.out(OM.string(new Message(cdj, "cdj")));
+            if (audibleChannels.equals(onAirChannels)) {
+              return;
+            }
+
+            onAirChannels = audibleChannels;
+            for (DeviceAnnouncement ann : DeviceFinder.getInstance().getCurrentDevices()) {
+              DeviceUpdate du = VirtualCdj.getInstance().getLatestStatusFor(ann);
+              if (!(du instanceof CdjStatus)) {
+                continue;
+              }
+
+              CDJ p = new CDJ((CdjStatus) du);
+              io.out(OM.string(new Message(p, "cdj")));
             }
           }
         }
