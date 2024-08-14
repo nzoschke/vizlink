@@ -35,6 +35,7 @@ import org.deepsymmetry.beatlink.DeviceAnnouncementListener;
 import org.deepsymmetry.beatlink.DeviceFinder;
 import org.deepsymmetry.beatlink.DeviceUpdate;
 import org.deepsymmetry.beatlink.MediaDetails;
+import org.deepsymmetry.beatlink.OnAirListener;
 import org.deepsymmetry.beatlink.VirtualCdj;
 import org.deepsymmetry.beatlink.data.AlbumArt;
 import org.deepsymmetry.beatlink.data.AlbumArtListener;
@@ -73,6 +74,7 @@ public class VizLink {
   static Map<Integer, String> banks = new ConcurrentHashMap<Integer, String>();
   static Map<Integer, String> moods = new ConcurrentHashMap<Integer, String>();
   static Map<Integer, Boolean> onAirs = new ConcurrentHashMap<Integer, Boolean>();
+  static Set<Integer> onAirChannels = new HashSet<>();
 
   static Thread vcdjThread = null;
 
@@ -417,6 +419,29 @@ public class VizLink {
             if (phrases != null && phrases.containsKey(cdj.beat)) {
               Phrase p = new Phrase(banks.get(cdj.player), cdj.beat, phrases.get(cdj.beat), cdj.master, moods.get(cdj.player), cdj.onAir, cdj.player);
               io.out(OM.string(new Message(p, "phrase")));
+            }
+          }
+        }
+      );
+
+    BeatFinder.getInstance()
+      .addOnAirListener(
+        new OnAirListener() {
+          @Override
+          public void channelsOnAir(Set<Integer> audibleChannels) {
+            if (audibleChannels.equals(onAirChannels)) {
+              return;
+            }
+
+            onAirChannels = audibleChannels;
+            for (DeviceAnnouncement ann : DeviceFinder.getInstance().getCurrentDevices()) {
+              DeviceUpdate du = VirtualCdj.getInstance().getLatestStatusFor(ann);
+              if (!(du instanceof CdjStatus)) {
+                continue;
+              }
+
+              CDJ p = new CDJ((CdjStatus) du);
+              io.out(OM.string(new Message(p, "cdj")));
             }
           }
         }
