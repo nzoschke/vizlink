@@ -34,6 +34,7 @@ import org.deepsymmetry.beatlink.DeviceAnnouncement;
 import org.deepsymmetry.beatlink.DeviceAnnouncementListener;
 import org.deepsymmetry.beatlink.DeviceFinder;
 import org.deepsymmetry.beatlink.DeviceUpdate;
+import org.deepsymmetry.beatlink.MasterListener;
 import org.deepsymmetry.beatlink.MediaDetails;
 import org.deepsymmetry.beatlink.OnAirListener;
 import org.deepsymmetry.beatlink.VirtualCdj;
@@ -75,6 +76,7 @@ public class VizLink {
   static Map<Integer, String> moods = new ConcurrentHashMap<Integer, String>();
   static Map<Integer, Boolean> onAirs = new ConcurrentHashMap<Integer, Boolean>();
   static Set<Integer> onAirChannels = new HashSet<>();
+  static Integer master = 0;
 
   static Thread vcdjThread = null;
 
@@ -524,6 +526,39 @@ public class VizLink {
           @Override
           public void detailChanged(WaveformDetailUpdate update) {
             System.err.println("WaveformFinder.detailChanged: " + update);
+          }
+        }
+      );
+
+    VirtualCdj.getInstance()
+      .addMasterListener(
+        new MasterListener() {
+          @Override
+          public void newBeat(Beat beat) {
+            // System.err.println("MasterListener.newBeat: " + beat);
+          }
+
+          @Override
+          public void masterChanged(DeviceUpdate update) {
+            if (update.getDeviceNumber() == master) {
+              return;
+            }
+
+            master = update.getDeviceNumber();
+            for (DeviceAnnouncement ann : DeviceFinder.getInstance().getCurrentDevices()) {
+              DeviceUpdate du = VirtualCdj.getInstance().getLatestStatusFor(ann);
+              if (!(du instanceof CdjStatus)) {
+                continue;
+              }
+
+              CDJ p = new CDJ((CdjStatus) du);
+              io.out(OM.string(new Message(p, "cdj")));
+            }
+          }
+
+          @Override
+          public void tempoChanged(double tempo) {
+            // System.err.println("MasterListener.tempoChanged: " + tempo);
           }
         }
       );
