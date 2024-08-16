@@ -431,6 +431,8 @@ public class VizLink {
         new OnAirListener() {
           @Override
           public void channelsOnAir(Set<Integer> audibleChannels) {
+            System.err.println("OnAirListener.channelsOnAir: " + audibleChannels);
+
             if (audibleChannels.equals(onAirChannels)) {
               return;
             }
@@ -442,7 +444,10 @@ public class VizLink {
                 continue;
               }
 
+              // synthesize latest onAir status for all players
               CDJ p = new CDJ((CdjStatus) du);
+              p.onAir = onAirChannels.contains(p.player);
+
               io.out(OM.string(new Message(p, "cdj")));
             }
           }
@@ -551,8 +556,8 @@ public class VizLink {
                 continue;
               }
 
+              // synthesize latest master status for all players
               CDJ p = new CDJ((CdjStatus) du);
-
               if (p.player != master) {
                 p.master = false;
               }
