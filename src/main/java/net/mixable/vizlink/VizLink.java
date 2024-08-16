@@ -552,6 +552,11 @@ public class VizLink {
               }
 
               CDJ p = new CDJ((CdjStatus) du);
+
+              if (p.player != master) {
+                p.master = false;
+              }
+
               io.out(OM.string(new Message(p, "cdj")));
             }
           }
