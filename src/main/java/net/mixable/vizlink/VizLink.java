@@ -431,8 +431,6 @@ public class VizLink {
         new OnAirListener() {
           @Override
           public void channelsOnAir(Set<Integer> audibleChannels) {
-            System.err.println("OnAirListener.channelsOnAir: " + audibleChannels);
-
             if (audibleChannels.equals(onAirChannels)) {
               return;
             }
