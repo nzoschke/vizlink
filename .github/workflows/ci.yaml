@@ -34,7 +34,7 @@ jobs:
           cache: "gradle"
           distribution: "liberica"
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          java-version: "21"
+          java-version: "24"
           native-image-job-reports: "true"
 
       - run: |
