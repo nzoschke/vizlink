@@ -38,8 +38,7 @@ jobs:
           native-image-job-reports: "true"
 
       - run: |
-          mvn install -f pom.xml -q
-          mvn package -f pom.xml -q -Pnative -DskipTests
+          gradle -p app nativeCompile
 
       - run: ${{ matrix.os.zip }}
 
