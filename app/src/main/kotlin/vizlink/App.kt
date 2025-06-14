@@ -1,12 +1,6 @@
 package vizlink
 
-class App {
-    val greeting: String
-        get() {
-            return "Hello World!"
-        }
-}
-
 fun main() {
-    println(App().greeting)
+  System.setProperty("apple.awt.UIElement", "true")
+  BeatLink.getInstance().start()
 }
