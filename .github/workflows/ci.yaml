@@ -31,7 +31,7 @@ jobs:
 
       - uses: graalvm/setup-graalvm@v1
         with:
-          cache: "maven"
+          cache: "gradle"
           distribution: "liberica"
           github-token: ${{ secrets.GITHUB_TOKEN }}
           java-version: "21"
