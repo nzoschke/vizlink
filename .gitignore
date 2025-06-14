@@ -1,3 +1,5 @@
+.gradle
 bellsoft*
+build
 node_modules
 target

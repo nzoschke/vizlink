@@ -15,31 +15,30 @@ jobs:
         os:
           - arch: darwin-arm64
             image: macos-latest
-            zip: zip -j vizlink-darwin-arm64.zip target/vizlink
+            zip: zip -j vizlink-darwin-arm64.zip app/build/native/nativeCompile/vizlink
           - arch: darwin-amd64
             image: macos-latest-large
-            zip: zip -j vizlink-darwin-amd64.zip target/vizlink
+            zip: zip -j vizlink-darwin-amd64.zip app/build/native/nativeCompile/vizlink
           - arch: windows-amd64
             image: windows-latest
-            zip: Compress-Archive -Destination vizlink-windows-amd64.zip -Path target/vizlink.exe, target/*.dll
+            zip: Compress-Archive -Destination vizlink-windows-amd64.zip -Path app/build/native/nativeCompile/vizlink.exe, app/build/native/nativeCompile/*.dll
           - arch: linux-amd64
             image: ubuntu-latest
-            zip: zip -j vizlink-linux-amd64.zip target/vizlink target/*.so
+            zip: zip -j vizlink-linux-amd64.zip app/build/native/nativeCompile/vizlink app/build/native/nativeCompile/*.so
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: graalvm/setup-graalvm@v1
         with:
-          cache: "maven"
+          cache: "gradle"
           distribution: "liberica"
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          java-version: "21"
+          java-version: "24"
           native-image-job-reports: "true"
 
       - run: |
-          mvn install -f pom.xml -q
-          mvn package -f pom.xml -q -Pnative -DskipTests
+          gradle nativeCompile
 
       - run: ${{ matrix.os.zip }}
 
